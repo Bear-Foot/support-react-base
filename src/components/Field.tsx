@@ -1,11 +1,13 @@
 import styled from "styled-components"
 
-const CustomInput = ({ name, type = 'text' }) => <FieldInput placeholder='à remplir...' id={name} type={type} />
+const CustomInput = ({ name, type = 'text', value, onChange }) => <FieldInput
+  placeholder='à remplir...' id={name} type={type} value={value} onChange={onChange}
+/>
 
-export const Field = ({ name, label, type = 'text' }) => (
+export const Field = ({ name, label, type = 'text', value, onChange }) => (
   <FieldWrapper>
     <FieldLabel htmlFor={name}>{label}</FieldLabel>
-    <CustomInput name={name} type={type}/>
+    <CustomInput name={name} type={type} value={value} onChange={onChange} />
   </FieldWrapper>
 )
 

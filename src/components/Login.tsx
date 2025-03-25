@@ -1,17 +1,73 @@
 import styled from 'styled-components'
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
-export const Login = () => (
-  <CenteringContainer>
-    <LoginForm>
-      <Field name="email" label="Email" />
-      <Field name="password" label="Mot de passe" type="password"/>
-      <LoginButton>
-        Se connecter
-      </LoginButton>
-    </LoginForm>
-  </CenteringContainer>
-)
+import { loginRequest } from '../requests'
 
+import { Field } from './Field'
+
+export const Login = () => {
+  const [email, setEmail] = useState('qwe')
+  const [password, setPassword] = useState('e')
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState()
+  const [error, setError] = useState()
+
+  const navigate = useNavigate()
+
+  const handleEmail = e => {
+    setEmail(e.target.value)
+    setError()
+    setData()
+  }
+  const handlePassword = e => {
+    setPassword(e.target.value)
+    setError()
+    setData()
+  }
+
+  const isDisabled = !email || !password
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    let result
+    try {
+      setIsLoading(true)
+      result = await loginRequest({ email, password })
+      
+      setData(result)
+      navigate('/home')
+      localStorage.setItem('token', result.token)
+    } catch (error) {
+      setError(error)
+      setPassword('')
+    }
+    setIsLoading(false)
+  }
+  console.log('isDisabled || isLoading ||  error', isLoading ||  error)
+  
+  return (
+    <CenteringContainer>
+      <LoginForm onSubmit={handleSubmit}>
+        <Field name="email" label="Email" value={email} onChange={handleEmail}/>
+        <Field name="password" label="Mot de passe" type="password" value={password} onChange={handlePassword}/>
+        {error && <Error>{error.message}</Error>}
+        <LoginButton
+          disabled={isDisabled || isLoading ||  error}
+          title={isDisabled ? 'Remplissez les champs' : ''}
+        >
+        Se connecter {isLoading && '...'}
+        </LoginButton>
+        {data && <div>Votre token est: {data.token}</div>}
+      </LoginForm>
+    </CenteringContainer>
+  )
+}
+
+const Error = styled.div`
+  color: red;
+`
 
 const CenteringContainer = styled.div`
   display: flex;
@@ -24,26 +80,7 @@ const LoginForm = styled.form`
   flex-direction: column;
   gap: 15px;
 `
-const FieldWrapper = styled.div`
-  width: 250px;
-  display: flex;
-  flex-direction: column;
-`
 
-const FieldLabel = styled.label`
-  margin-bottom: 5px;
-  color: #128;
-`
-const FieldInput = styled.input`
-  border: none;
-  border-bottom: 1px solid black;
-  padding: 5px 0;
-  outline: none;
-
-  &:focus{
-    border-bottom: 1px solid #128;
-  }
-`
 const LoginButton = styled.button`
   background: #128;
   color: white;
@@ -53,12 +90,9 @@ const LoginButton = styled.button`
   text-transform: uppercase;
   padding: 10px;
   cursor: pointer;
-`
-const CustomInput = ({ name, type = 'text' }) => <FieldInput placeholder='à remplir...' id={name} type={type} />
 
-const Field = ({ name, label, type = 'text' }) => (
-  <FieldWrapper>
-    <FieldLabel htmlFor={name}>{label}</FieldLabel>
-    <CustomInput name={name} type={type}/>
-  </FieldWrapper>
-)
+  &:disabled {
+    background: #888;
+    cursor: default;
+  }
+`

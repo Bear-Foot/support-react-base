@@ -23,3 +23,18 @@ export const loginRequest = async ({ email, password }) => {
     token: 'superToken',
   }
 }
+
+export const meRequest = async ({ token }) => {
+  await sleep()
+
+  if (!token) {
+    throw {
+      error: 'unauthorized',
+    }
+  }
+
+  return {
+    username: 'Personne',
+  }
+}
+
