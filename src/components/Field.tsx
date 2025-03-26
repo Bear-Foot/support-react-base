@@ -1,15 +1,23 @@
 import styled from "styled-components"
 
-const CustomInput = ({ name, type = 'text', value, onChange }) => <FieldInput
-  placeholder='à remplir...' id={name} type={type} value={value} onChange={onChange}
+const CustomInput = ({ type = 'text', ...rest }) => <FieldInput
+  placeholder='à remplir...' type={type} {...rest}
 />
 
-export const Field = ({ name, label, type = 'text', value, onChange }) => (
-  <FieldWrapper>
-    <FieldLabel htmlFor={name}>{label}</FieldLabel>
-    <CustomInput name={name} type={type} value={value} onChange={onChange} />
-  </FieldWrapper>
-)
+export const CustomField = ({ name, label, type = 'text', value, onChange, input, meta }) => {
+  
+  return (
+    <FieldWrapper>
+      <FieldLabel htmlFor={name}>{label}</FieldLabel>
+      <CustomInput name={name} type={type} value={value} onChange={onChange} {...input} />
+      {meta?.touched && <Error>{meta.error}</Error>}
+    </FieldWrapper>
+  )
+}
+
+const Error = styled.div`
+  color: red;
+`
 
 const FieldWrapper = styled.div`
   width: 250px;

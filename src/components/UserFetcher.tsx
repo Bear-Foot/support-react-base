@@ -1,21 +1,18 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router"
+import { createContext, useEffect, useState } from "react"
 
 import { meRequest } from "../requests"
+import { useDisconnect } from "../hooks/disconnect"
 
+export const UserContext = createContext(null)
+let i = 0
 export const UserFetcher = ({ children }) => {
   const [user, setUser] = useState()
   const [s, setIsLoading] = useState(false)
-  const navigate = useNavigate()
-
-  const disconnect = () => {
-    localStorage.removeItem('token')
-    navigate('/')
-  }
+  const disconnect = useDisconnect()
 
   useEffect(() => {
+    console.log('getMe', i ++)
     const getMe = async () => {
-      console.log('qwe')
       let result
       setIsLoading(true)
       const token = localStorage.getItem('token')
@@ -29,10 +26,12 @@ export const UserFetcher = ({ children }) => {
     }
 
     getMe()
-  }, [])
+  }, [disconnect])
   if (!user) {
     return 'Chargement...'
   }
   
-  return children
+  return <UserContext.Provider value={user}>
+    {children}
+  </UserContext.Provider>
 }

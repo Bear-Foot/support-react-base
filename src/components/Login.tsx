@@ -1,14 +1,16 @@
 import styled from 'styled-components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { loginRequest } from '../requests'
+import { useInputState } from '../hooks/useInputValue'
+import { myEmitter } from '../emitter'
 
-import { Field } from './Field'
+import { CustomField } from './Field'
 
 export const Login = () => {
-  const [email, setEmail] = useState('qwe')
-  const [password, setPassword] = useState('e')
+  const [email, setEmail] = useInputState('qwe')
+  const [password, setPassword, setPasswordValue] = useInputState('e')
 
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState()
@@ -16,16 +18,12 @@ export const Login = () => {
 
   const navigate = useNavigate()
 
-  const handleEmail = e => {
-    setEmail(e.target.value)
+  const resetErrorAndData = () => {
     setError()
     setData()
   }
-  const handlePassword = e => {
-    setPassword(e.target.value)
-    setError()
-    setData()
-  }
+
+  useEffect(resetErrorAndData, [email, password])
 
   const isDisabled = !email || !password
 
@@ -41,17 +39,18 @@ export const Login = () => {
       localStorage.setItem('token', result.token)
     } catch (error) {
       setError(error)
-      setPassword('')
+      // setPasswordValue('')
     }
     setIsLoading(false)
   }
-  console.log('isDisabled || isLoading ||  error', isLoading ||  error)
   
   return (
     <CenteringContainer>
       <LoginForm onSubmit={handleSubmit}>
-        <Field name="email" label="Email" value={email} onChange={handleEmail}/>
-        <Field name="password" label="Mot de passe" type="password" value={password} onChange={handlePassword}/>
+        <CustomField name="email" label="Email" value={email} onChange={setEmail}/>
+        <CustomField name="password" label="Mot de passe"
+          type="password" value={password} onChange={setPassword}
+        />
         {error && <Error>{error.message}</Error>}
         <LoginButton
           disabled={isDisabled || isLoading ||  error}

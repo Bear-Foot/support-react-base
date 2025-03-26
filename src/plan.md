@@ -3,10 +3,11 @@
     Style
     Props
     States
-    Rendu conditionnel
-    Promesses
-    Fetch - here
-    Routing
-    Contextes
-    Effects
-    Rendu dynamique (map)
+    Rendu conditionnel 
+    Promesses - mwé
+    Fetch - mwé
+    Routing -> après login
+    Contextes -> userFetcher
+    Effects -> première requête automatique -> cleanup setInterval
+    Rendu dynamique (map) -> liste gens
+    Refs -> popover
